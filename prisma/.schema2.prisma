@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Role {
+  ROLE_ID         String   @id @db.VarChar(255)
+  ROLE_NAME       String   @db.VarChar(150)
+  ROLE_CREATED_AT DateTime @default(now())
+  ROLE_UPDATED_AT DateTime @updatedAt
+  ROLE_IS_DELETED Boolean  @default(false)
+  Users           Users[]
+}
+
+model Users {
+  USER_ID         String   @id @db.VarChar(255)
+  USER_EMAIL      String   @db.VarChar(150)
+  USER_USERNAME   String   @db.VarChar(150)
+  USER_PASSWORD   String   @db.VarChar(255)
+  USER_TOKEN      String?  @db.Text
+  USER_CREATED_AT DateTime @default(now())
+  USER_UPDATED_AT DateTime @updatedAt
+  USER_IS_DELETED Boolean  @default(false)
+  USER_ROLE       String   @db.VarChar(255)
+
+  // Relasi ke table role
+  ROLE    Role      @relation(fields: [USER_ROLE], references: [ROLE_ID], onUpdate: Cascade, onDelete: Cascade)
+  Profile Profile[]
+}
+
+model Profile {
+  PROFILE_ID           String   @id @db.VarChar(255)
+  PROFILE_NAME         String   @db.VarChar(100)
+  PROFILE_ADDRESS      String   @db.Text
+  PROFILE_GENDER       Boolean  @default(true)
+  PROFILE_PHONE_NUMBER String   @db.VarChar(15)
+  PROFILE_USER         String   @db.VarChar(255)
+  PROFILE_CREATED_AT   DateTime @default(now())
+  PROFILE_UPDATED_AT   DateTime @updatedAt
+
+  // Relasi ke table user
+  USER Users @relation(fields: [PROFILE_USER], references: [USER_ID], onUpdate: Cascade, onDelete: Cascade)
+}

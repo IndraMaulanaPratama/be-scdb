@@ -1,0 +1,438 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model PENGGUNA {
+  PENGGUNA_ID         String    @id @default(uuid()) @db.VarChar(36)
+  PENGGUNA_PERAN      String    @db.VarChar(36) // Foreign Key table role
+  PENGGUNA_EMAIL      String    @db.VarChar(150)
+  PENGGUNA_USERNAME   String    @db.VarChar(150)
+  PENGGUNA_PASSWORD   String    @db.VarChar(255)
+  PENGGUNA_TOKEN      String?   @db.Text
+  PENGGUNA_CREATED_AT DateTime  @default(now())
+  PENGGUNA_UPDATED_AT DateTime? @updatedAt
+  PENGGUNA_IS_DELETED Boolean   @default(false)
+
+  // Relasi table peran
+  PERAN PERAN @relation(fields: [PENGGUNA_PERAN], references: [PERAN_ID], onDelete: Restrict, onUpdate: Cascade)
+
+  BIODATA        BIODATA[]
+  AKSES_APLIKASI AKSES_APLIKASI[]
+  APLIKASI       APLIKASI[]
+  PRAJA          PRAJA[]
+}
+
+model BIODATA {
+  BIODATA_ID            String    @id @default(uuid()) @db.VarChar(36)
+  BIODATA_PENGGUNA      String
+  BIODATA_NAMA          String    @db.VarChar(100)
+  BIODATA_ALAMAT        String    @db.Text
+  BIODATA_JENIS_KELAMIN Boolean
+  BIODATA_NOMOR_TELEPON String?   @db.VarChar(15)
+  BIODATA_CREATED_AT    DateTime  @default(now())
+  BIODATA_UPDATE_AT     DateTime? @updatedAt
+
+  //  Relasi table pengguna
+  PENGGUNA PENGGUNA @relation(fields: [BIODATA_PENGGUNA], references: [PENGGUNA_ID], onUpdate: Cascade, onDelete: Cascade)
+}
+
+model PERAN {
+  PERAN_ID         String    @id @default(uuid()) @db.VarChar(36)
+  PERAN_NAMA       String    @db.VarChar(150)
+  PERAN_CREATED_AT DateTime  @default(now())
+  PERAN_UPDATED_AT DateTime? @updatedAt
+  PERAN_IS_DELETED Boolean   @default(false)
+
+  PENGGUNA PENGGUNA[]
+}
+
+model APLIKASI {
+  APLIKASI_ID         String    @id @default(uuid()) @db.VarChar(36)
+  APLIKASI_ADMIN      String    @db.VarChar(36) // Foreign Key table pengguna
+  APLIKASI_NAMA       String    @db.VarChar(255)
+  APLIKASI_URL        String    @db.VarChar(255)
+  APLIKASI_CREATED_AT DateTime  @default(now())
+  APLIKASI_UPDATED_AT DateTime? @updatedAt
+  APLIKASI_IS_DELETED Boolean   @default(false)
+
+  // Relasi table pengguna
+  PENGGUNA        PENGGUNA          @relation(fields: [APLIKASI_ADMIN], references: [PENGGUNA_ID], onUpdate: Cascade, onDelete: Restrict)
+  APLIKASI        AKSES_APLIKASI[]
+  LOKASI_APLIKASI LOKASI_APLIKASI[]
+}
+
+model AKSES_APLIKASI {
+  AKSES_ID         String    @id @default(uuid()) @db.VarChar(36)
+  AKSES_APLIKASI   String    @db.VarChar(36) // Foreign Key table aplikasi
+  AKSES_PENGGUNA   String    @db.VarChar(36) // Foreign Key table pengguna
+  AKSES_CREATED_AT DateTime  @default(now())
+  AKSES_UPDATED_AT DateTime? @updatedAt
+  AKSES_IS_DELETED Boolean   @default(false)
+
+  // Relasi table pengguna
+  PENGGUNA PENGGUNA @relation(fields: [AKSES_PENGGUNA], references: [PENGGUNA_ID], onDelete: Cascade, onUpdate: Cascade)
+
+  // Relasi table aplikasi
+  APLIKASI APLIKASI @relation(fields: [AKSES_APLIKASI], references: [APLIKASI_ID], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model LOKASI_APLIKASI {
+  LOKASI_ID           String    @id @default(uuid()) @db.VarChar(36)
+  LOKASI_APLIKASI     String    @db.VarChar(36) // Foreign Key table aplikasi
+  LOKASI_SATUAN_KERJA String    @db.VarChar(36) // Foreign Key table satuan kerja
+  LOKASI_CREATED_AT   DateTime  @default(now())
+  LOKASI_UPDATED_AT   DateTime? @updatedAt
+
+  // Relasi table aplikasi
+  APLIKASI APLIKASI @relation(fields: [LOKASI_APLIKASI], references: [APLIKASI_ID], onDelete: Cascade, onUpdate: Cascade)
+
+  // Relasi table satuan kerja
+  SATUAN_KERJA SATUAN_KERJA @relation(fields: [LOKASI_SATUAN_KERJA], references: [SATKER_ID], onDelete: NoAction, onUpdate: Cascade)
+}
+
+model SATUAN_KERJA {
+  SATKER_ID       String  @id @default(uuid()) @db.VarChar(36)
+  SATKER_LEMBAGA  String? @db.VarChar(36) // Foreign Key table lembaga
+  SATKER_FAKULTAS String? @db.VarChar(36) // Foreign Key table fakultas
+  SATKER_BIRO     String? @db.VarChar(36) // Foreign Key table biro
+  SATKER_SATUAN   String? @db.VarChar(36) // Foreign Key table satuan
+  SATKER_NAMA     String  @db.VarChar(200)
+
+  // Relasi table lembaga
+  LEMBAGA LEMBAGA? @relation(fields: [SATKER_LEMBAGA], references: [LEMBAGA_ID], onDelete: Cascade, onUpdate: Cascade)
+
+  // Relasi table fakultas
+  FAKULTAS FAKULTAS? @relation(fields: [SATKER_FAKULTAS], references: [FAKULTAS_ID], onDelete: Cascade, onUpdate: Cascade)
+
+  // Relasi biro
+  BIRO BIRO? @relation(fields: [SATKER_BIRO], references: [BIRO_ID], onDelete: Cascade, onUpdate: Cascade)
+
+  // Relasi Satuan
+  SATUAN SATUAN? @relation(fields: [SATKER_SATUAN], references: [SATUAN_ID], onDelete: Cascade, onUpdate: Cascade)
+
+  LOKASI_APLIKASI LOKASI_APLIKASI[]
+}
+
+model LEMBAGA {
+  LEMBAGA_ID         String    @id @default(uuid()) @db.VarChar(36)
+  LEMBAGA_NAMA       String    @db.VarChar(200)
+  LEMBAGA_CREATED_AT DateTime  @default(now())
+  LEMBAGA_UPDATED_AT DateTime? @updatedAt
+  LEMBAGA_IS_DELETED Boolean   @default(false)
+
+  SATUAN_KERJA SATUAN_KERJA[]
+}
+
+model FAKULTAS {
+  FAKULTAS_ID         String    @id @default(uuid()) @db.VarChar(36)
+  FAKULTAS_NAMA       String    @db.VarChar(200)
+  FAKULTAS_CREATED_AT DateTime  @default(now())
+  FAKULTAS_UPDATED_AT DateTime? @updatedAt
+  FAKULTAS_IS_DELETED Boolean   @default(false)
+
+  SATUAN_KERJA  SATUAN_KERJA[]
+  PROGRAM_STUDI PROGRAM_STUDI[]
+}
+
+model PROGRAM_STUDI {
+  PRODI_ID         String    @id @default(uuid()) @db.VarChar(36)
+  PRODI_FAKULTAS   String    @db.VarChar(36) // Foreign Key table fakultas
+  PRODI_NAMA       String    @db.VarChar(200)
+  PRODI_CREATED_AT DateTime  @default(now())
+  PRODI_UPDATED_AT DateTime? @updatedAt
+  PRODI_IS_DELETED Boolean   @default(false)
+
+  // Relasi table fakultas
+  FAKULTAS FAKULTAS @relation(fields: [PRODI_FAKULTAS], references: [FAKULTAS_ID], onDelete: Cascade, onUpdate: Cascade)
+
+  PRAJA PRAJA[]
+}
+
+model BIRO {
+  BIRO_ID         String    @id @default(uuid()) @db.VarChar(36)
+  BIRO_NAMA       String    @db.VarChar(200)
+  BIRO_CREATED_AT DateTime  @default(now())
+  BIRO_UPDATED_AT DateTime? @updatedAt
+  BIRO_IS_DELETED Boolean   @default(false)
+
+  SATUAN_KERJA SATUAN_KERJA[]
+}
+
+model SATUAN {
+  SATUAN_ID         String    @id @default(uuid()) @db.VarChar(36)
+  SATUAN_NAMA       String    @db.VarChar(200)
+  SATUAN_CREATED_AT DateTime  @default(now())
+  SATUAN_UPDATED_AT DateTime? @updatedAt
+  SATUAN_IS_DELETED Boolean   @default(false)
+
+  SATUAN_KERJA SATUAN_KERJA[]
+}
+
+model PRAJA {
+  PRAJA_NPP                      String @id @db.VarChar(7)
+  PRAJA_PENGGUNA                 String @db.VarChar(36) // Foreign Key table pengguna
+  PRAJA_NOMOR_INDUK_KEPENDUDUKAN String @db.VarChar(16)
+  PRAJA_ASAL_PENDAFTARAN         String @db.VarChar(36) // Foreign Key table provinsi 
+
+  // Area Alamat
+  PRAJA_NAMA          String @db.VarChar(200)
+  PRAJA_TEMPAT_LAHIR  String @db.VarChar(100) // Foreign Key table kota
+  PRAJA_TANGGAL_LAHIR String @db.VarChar(50)
+  PRAJA_PROVINSI      String @db.VarChar(36) // Foreign Key table provinsi
+  PRAJA_KOTA          String @db.VarChar(36) // Foreign Key table kota
+  PRAJA_KECAMATAN     String @db.VarChar(36) // Foreign Key table kecamatan
+  PRAJA_KELURAHAN     String @db.VarChar(36) // Foreign Key table kelurahan
+  PRAJA_ALAMAT        String @db.VarChar(255)
+  PRAJA_SUKU          String @db.VarChar(36) // Foreign Key table Suku
+
+  PRAJA_JENIS_KELAMIN Boolean
+  PRAJA_AGAMA         String  @db.VarChar(36) // Foreign Key table agama
+
+  // Area Pendidikan
+  PRAJA_ANGKATAN           String @db.VarChar(36) // Foreign Key table angkatan
+  PRAJA_JENJANG_PENDIDIKAN String @db.VarChar(36) // Foreign Key table program pendidikan
+  PRAJA_PROGRAM_STUDI      String @db.VarChar(36) // Foreign Key table program studi
+  PRAJA_KELAS              String @db.VarChar(36) // Foreign Key table kelas
+  PRAJA_PANGKAT            String @db.VarChar(36) // Foreign Key table pangkat
+
+  // Area Kampus
+  PRAJA_LOKASI_KAMPUS        String  @db.VarChar(36) // Foreign Key table lokasi kampus
+  PRAJA_LOKASI_KAMPUS_MUDA   String? @db.VarChar(36) // Foreign Key table lokasi kampus
+  PRAJA_LOKASI_KAMPUS_MADYA  String? @db.VarChar(36) // Foreign Key table lokasi kampus
+  PRAJA_LOKASI_KAMPUS_WASANA String? @db.VarChar(36) // Foreign Key table lokasi kampus
+  PRAJA_WISMA                String? @db.VarChar(36) // Foreign Key Table wisma
+
+  // Area Keluarga
+  PRAJA_NAMA_AYAH      String  @db.VarChar(150)
+  PRAJA_PEKERJAAN_AYAH String? @db.VarChar(200)
+  PRAJA_NAMA_IBU       String  @db.VarChar(150)
+  PRAJA_PEKERJAAN_IBU  String? @db.VarChar(200)
+
+  // Area File
+  PRAJA_FOTO String? @db.VarChar(255)
+
+  PRAJA_CREATED_AT DateTime @default(now())
+  PRAJA_UPDATED_AT DateTime @updatedAt
+  PRAJA_IS_DELETED Boolean  @default(false)
+
+  // *** Relasi Area *** ///
+  // Relasi pengguna
+  PENGGUNA PENGGUNA @relation(fields: [PRAJA_PENGGUNA], references: [PENGGUNA_ID], onDelete: Restrict, onUpdate: Cascade)
+
+  // Relasi Alamat //
+  PROVINSI         PROVINSI  @relation(name: "provinsi_praja", fields: [PRAJA_PROVINSI], references: [PROVINSI_ID], onUpdate: Cascade)
+  ASAL_PENDAFTARAN PROVINSI  @relation(name: "asal_pendaftaran_praja", fields: [PRAJA_ASAL_PENDAFTARAN], references: [PROVINSI_ID], onUpdate: Cascade)
+  TEMPAT_LAHIR     KOTA      @relation(name: "tempat_lahir_praja", fields: [PRAJA_TEMPAT_LAHIR], references: [KOTA_ID], onDelete: Restrict, onUpdate: Cascade)
+  KOTA             KOTA      @relation(name: "kota_praja", fields: [PRAJA_KOTA], references: [KOTA_ID], onDelete: Restrict, onUpdate: Cascade)
+  KECAMATAN        KECAMATAN @relation(fields: [PRAJA_KECAMATAN], references: [KECAMATAN_ID], onDelete: Restrict, onUpdate: Cascade)
+  KELURAHAN        KELURAHAN @relation(fields: [PRAJA_KELURAHAN], references: [KELURAHAN_ID], onDelete: Restrict, onUpdate: Cascade)
+  // END of alamat //
+
+  // Relasi table suku
+  SUKU SUKU @relation(fields: [PRAJA_SUKU], references: [SUKU_ID], onDelete: Restrict, onUpdate: Cascade)
+
+  // Relasi table agama
+  AGAMA AGAMA @relation(fields: [PRAJA_AGAMA], references: [AGAMA_ID], onDelete: Restrict, onUpdate: Cascade)
+
+  // Relasi Pendidikan //
+  ANGKATAN           ANGKATAN           @relation(fields: [PRAJA_ANGKATAN], references: [ANGKATAN_ID], onDelete: NoAction, onUpdate: Cascade)
+  JENJANG_PENDIDIKAN JENJANG_PENDIDIKAN @relation(fields: [PRAJA_JENJANG_PENDIDIKAN], references: [JENJANG_ID], onDelete: NoAction, onUpdate: Cascade)
+  PROGRAM_STUDI      PROGRAM_STUDI      @relation(fields: [PRAJA_PROGRAM_STUDI], references: [PRODI_ID], onDelete: NoAction, onUpdate: Cascade)
+  KELAS              KELAS              @relation(fields: [PRAJA_KELAS], references: [KELAS_ID], onDelete: NoAction, onUpdate: Cascade)
+  PANGKAT            PANGKAT            @relation(fields: [PRAJA_PANGKAT], references: [PANGKAT_ID], onDelete: NoAction, onUpdate: Cascade)
+  // End of pendidikan //
+
+  // Relasi Lokasi Kampus //
+  LOKASI_KAMPUS LOKASI_KAMPUS  @relation(name: "lokasi_praja", fields: [PRAJA_LOKASI_KAMPUS], references: [LOKASI_ID], onDelete: NoAction, onUpdate: Cascade)
+  LOKASI_MUDA   LOKASI_KAMPUS? @relation(name: "lokasi_muda", fields: [PRAJA_LOKASI_KAMPUS_MUDA], references: [LOKASI_ID], onDelete: NoAction, onUpdate: Cascade)
+  LOKASI_MADYA  LOKASI_KAMPUS? @relation(name: "lokasi_madya", fields: [PRAJA_LOKASI_KAMPUS_MADYA], references: [LOKASI_ID], onDelete: NoAction, onUpdate: Cascade)
+  LOKASI_WASANA LOKASI_KAMPUS? @relation(name: "lokasi_wasana", fields: [PRAJA_LOKASI_KAMPUS_WASANA], references: [LOKASI_ID], onDelete: NoAction, onUpdate: Cascade)
+  // End of lokasi kampus //
+
+  // Relasi Wisma
+  WISMA WISMA? @relation(fields: [PRAJA_WISMA], references: [WISMA_ID], onDelete: NoAction, onUpdate: Cascade)
+}
+
+model PROVINSI {
+  PROVINSI_ID         String    @id @default(uuid()) @db.VarChar(36)
+  PROVINSI_NAMA       String    @db.VarChar(200)
+  PROVINSI_CREATED_AT DateTime  @default(now())
+  PROVINSI_UPDATED_AT DateTime? @updatedAt
+  PROVINSI_IS_DELETED Boolean   @default(false)
+
+  // Relasi kota
+  KOTA KOTA[]
+
+  // Relasi Praja
+  PROVINSI         PRAJA[] @relation(name: "provinsi_praja")
+  ASAL_PENDAFTARAN PRAJA[] @relation(name: "asal_pendaftaran_praja")
+}
+
+model KOTA {
+  KOTA_ID         String    @id @default(uuid()) @db.VarChar(36)
+  KOTA_PROVINSI   String    @db.VarChar(36) // Foreign Key table provinsi
+  KOTA_NAMA       String    @db.VarChar(200)
+  KOTA_CREATED_AT DateTime  @default(now())
+  KOTA_UPDATED_AT DateTime? @updatedAt
+  KOTA_IS_DELETED Boolean   @default(false)
+
+  // Relasi table provinsi
+  PROVINSI PROVINSI @relation(fields: [KOTA_PROVINSI], references: [PROVINSI_ID], onDelete: Restrict, onUpdate: Cascade)
+
+  // Table praja
+  TEMPAT_LAHIR PRAJA[] @relation(name: "tempat_lahir_praja")
+  KOTA         PRAJA[] @relation(name: "kota_praja")
+
+  // Table kecamatan
+  KECAMATAN KECAMATAN[]
+}
+
+model KECAMATAN {
+  KECAMATAN_ID         String    @id @default(uuid()) @db.VarChar(36)
+  KECAMATAN_KOTA       String    @db.VarChar(36) // Foreign Key table kota
+  KECAMATAN_NAMA       String    @db.VarChar(200)
+  KECAMATAN_CREATED_AT DateTime  @default(now())
+  KECAMATAN_UPDATED_AT DateTime? @updatedAt
+  KECAMATAN_IS_DELETED Boolean   @default(false)
+
+  // Relasi table kota
+  KOTA KOTA @relation(fields: [KECAMATAN_KOTA], references: [KOTA_ID], onDelete: Restrict, onUpdate: Cascade)
+
+  // Relasi tabel praja
+  PRAJA PRAJA[]
+
+  // Relasi table kelurahan
+  KELURAHAN KELURAHAN[]
+}
+
+model KELURAHAN {
+  KELURAHAN_ID         String    @id @default(uuid()) @db.VarChar(36)
+  KELURAHAN_KECAMATAN  String    @db.VarChar(36) // Foreign Key table kecamatan
+  KELURAHAN_NAMA       String    @db.VarChar(200)
+  KELURAHAN_CREATED_AT DateTime  @default(now())
+  KELURAHAN_UPDATED_AT DateTime? @updatedAt
+  KELURAHAN_IS_DELETED Boolean   @default(false)
+
+  // Relasi table kecamatan
+  KECAMATAN KECAMATAN @relation(fields: [KELURAHAN_KECAMATAN], references: [KECAMATAN_ID], onDelete: Restrict, onUpdate: Cascade)
+
+  // Relasi table praja
+  PRAJA PRAJA[]
+}
+
+model SUKU {
+  SUKU_ID         String    @id @default(uuid()) @db.VarChar(36)
+  SUKU_NAMA       String    @db.VarChar(200)
+  SUKU_CREATED_AT DateTime  @default(now())
+  SUKU_UPDATED_AT DateTime? @updatedAt
+  SUKU_IS_DELETED Boolean   @default(false)
+
+  // Relasi tabel praja
+  PRAJA PRAJA[]
+}
+
+model ANGKATAN {
+  ANGKATAN_ID         String    @id @default(uuid()) @db.VarChar(36)
+  ANGKATAN_NAMA       String    @db.VarChar(200)
+  ANGKATAN_CREATED_AT DateTime  @default(now())
+  ANGKATAN_UPDATED_AT DateTime? @updatedAt
+  ANGKATAN_IS_DELETED Boolean   @default(false)
+
+  // Relasi table praja
+  PRAJA PRAJA[]
+}
+
+model JENJANG_PENDIDIKAN {
+  JENJANG_ID         String    @id @default(uuid()) @db.VarChar(36)
+  JENJANG_NAMA       String    @db.VarChar(200)
+  JENJANG_CREATED_AT DateTime  @default(now())
+  JENJANG_UPDATED_AT DateTime? @updatedAt
+  JENJANG_IS_DELETED Boolean   @default(false)
+
+  // Relasi table praja
+  PRAJA PRAJA[]
+}
+
+model KELAS {
+  KELAS_ID         String    @id @default(uuid()) @db.VarChar(36)
+  KELAS_NAMA       String    @db.VarChar(200)
+  KELAS_CREATED_AT DateTime  @default(now())
+  KELAS_UPDATED_AT DateTime? @updatedAt
+  KELAS_IS_DELETED Boolean   @default(false)
+
+  // Relasi table praja
+  PRAJA PRAJA[]
+}
+
+model PANGKAT {
+  PANGKAT_ID         String    @id @default(uuid()) @db.VarChar(36)
+  PANGKAT_NAMA       String    @db.VarChar(200)
+  PANGKAT_CREATED_AT DateTime  @default(now())
+  PANGKAT_UPDATED_AT DateTime? @updatedAt
+  PANGKAT_IS_DELETED Boolean   @default(false)
+
+  // Relasi table praja
+  PRAJA PRAJA[]
+}
+
+model LOKASI_KAMPUS {
+  LOKASI_ID         String    @id @default(uuid()) @db.VarChar(36)
+  LOKASI_NAMA       String    @db.VarChar(200)
+  LOKASI_ALAMAT     String    @db.Text
+  LOKASI_CREATED_AT DateTime  @default(now())
+  LOKASI_UPDATED_AT DateTime? @updatedAt
+  LOKASI_IS_DELETED Boolean   @default(false)
+
+  // Relasi table praja
+  lokasi_praja  PRAJA[] @relation(name: "lokasi_praja")
+  lokasi_muda   PRAJA[] @relation(name: "lokasi_muda")
+  lokasi_madya  PRAJA[] @relation(name: "lokasi_madya")
+  lokasi_wasana PRAJA[] @relation(name: "lokasi_wasana")
+
+  // Relasi Wisma
+  WISMA WISMA[]
+}
+
+model WISMA {
+  WISMA_ID         String    @id @default(uuid()) @db.VarChar(36)
+  WISMA_KAMPUS     String    @db.VarChar(36) // Foreign Key table lokasi kampus
+  WISMA_NAMA       String    @db.VarChar(200)
+  WISMA_LANTAI     Int       @db.Int()
+  WISMA_CREATED_AT DateTime  @default(now())
+  WISMA_UPDATED_AT DateTime? @updatedAt
+  WISMA_IS_DELETED Boolean   @default(false)
+
+  // Relasi table lokasi kampus
+  LOKASI_KAMPUS LOKASI_KAMPUS @relation(fields: [WISMA_KAMPUS], references: [LOKASI_ID], onDelete: Restrict, onUpdate: Cascade)
+
+  // Relasi table wisma
+  PRAJA PRAJA[]
+}
+
+model AGAMA {
+  AGAMA_ID         String    @id @default(uuid()) @db.VarChar(36)
+  AGAMA_NAMA       String    @db.VarChar(200)
+  AGAMA_CREATED_AT DateTime  @default(now())
+  AGAMA_UPDATED_AT DateTime? @updatedAt
+  AGAMA_IS_DELETED Boolean   @default(false)
+
+  // Relasi tabel praja
+  PRAJA PRAJA[]
+}
+
+model LOGGER {
+  LOG_ID         String   @id @default(uuid()) @db.VarChar(36)
+  LOG_PENGGUNA   String   @db.VarChar(36)
+  LOG_KEGIATAN   String   @db.Text
+  LOG_STATUS     Boolean  @default(true)
+  LOG_KETERANGAN String?   @db.Text
+  LOG_CREATED_AT DateTime @default(now())
+}

@@ -1,0 +1,6 @@
+export * from "./app-location-route.js"
+export * from "./auth-route.js"
+export * from "./role-route.js"
+export * from "./satuan-kerja-route.js"
+export * from "./lembaga-route.js"
+export * from "./fakultas-route.js"

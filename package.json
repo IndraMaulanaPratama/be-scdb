@@ -1,0 +1,55 @@
+{
+  "name": "ipdn_scdb",
+  "version": "1.0.0",
+  "description": "System terintegrasi Smart Campus Database IPDN",
+  "main": "source/main.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon sources/main.js --host=0.0.0.0",
+    "test": "jest -i",
+    "seed": "node prisma/seeders/execute-seeders.js"
+  },
+  "prisma": {
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.[t|j]sx?$": "babel-jest"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IndraMaulanaPratama/ipdn_scdb.git"
+  },
+  "author": "indra-maulana",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IndraMaulanaPratama/ipdn_scdb/issues"
+  },
+  "homepage": "https://github.com/IndraMaulanaPratama/ipdn_scdb#readme",
+  "dependencies": {
+    "@prisma/client": "^5.1.1",
+    "axios": "^1.5.0",
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "joi": "^17.9.2",
+    "jsonwebtoken": "^9.0.1",
+    "nodemon": "^3.0.1",
+    "uuid": "^9.0.0",
+    "winston": "^3.10.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.22.10",
+    "@types/bcrypt": "^5.0.0",
+    "@types/express": "^4.17.17",
+    "@types/jest": "^29.5.3",
+    "@types/supertest": "^2.0.12",
+    "@types/uuid": "^9.0.2",
+    "babel-jest": "^29.6.3",
+    "jest": "^29.6.3",
+    "prisma": "^5.1.1",
+    "supertest": "^6.3.3"
+  }
+}

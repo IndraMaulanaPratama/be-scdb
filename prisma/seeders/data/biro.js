@@ -1,0 +1,23 @@
+
+export const biro = [
+    {
+        BIRO_ID: `1dcabc2e-b7bb-43e2-95ac-d5f66c7136d3`,
+        BIRO_NAMA: `BIRO ADMINISTRASI AKADEMIK DAN PERENCANAAN`,
+    },
+
+    {
+        BIRO_ID: `4afef74a-7928-4d6a-8c0f-c0efd070cfdb`,
+        BIRO_NAMA: `BIRO ADMINISTRASI UMUM DAN KEUANGAN`,
+    },
+
+    {
+        BIRO_ID: `2b7c2288-9536-4901-b5b5-09fe3b27c44b`,
+        BIRO_NAMA: `BIRO ADMINISTRASI HUKUM, KEPEGAWAIAN, DAN HUBUNGAN MASYARAKAT`,
+    },
+
+    {
+        BIRO_ID: `b4eb011c-84d3-4486-9f75-26bcc7bdbb5b`,
+        BIRO_NAMA: `BIRO ADMINISTRASI KEPRAJAAN, KEMAHASISWAAN, DAN ALUMNI`,
+    },
+
+]
