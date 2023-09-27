@@ -9,7 +9,8 @@ import {
     appLocation,
     satkerRoute,
     lembagaRoute,
-    fakultasRoute
+    fakultasRoute,
+    biroRoute
 } from "../routes/index.js"
 
 // Inisialisasi Variable
@@ -24,6 +25,7 @@ app.use(cors({ credentials: true, origin: client })) // Module untuk dapat diaks
 
 
 // Route
+app.use("/biro", biroRoute)
 app.use("/fakultas", fakultasRoute)
 app.use("/lembaga", lembagaRoute)
 app.use("/satuan-kerja/", satkerRoute)
