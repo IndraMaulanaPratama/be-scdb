@@ -16,7 +16,8 @@ import {
 // Inisialisasi Variable
 const app = express()
 const globalFrontendApp = process.env.HOST_FRONTEND
-const client = [globalFrontendApp]
+const domainFrontend = "http://v2.scdb.ipdn.ac.id"
+const client = [globalFrontendApp, domainFrontend]
 let data = []
 
 app.use(express.json()) // Module untuk memperbolehkan request masuk berupa json
