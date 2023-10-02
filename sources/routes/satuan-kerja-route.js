@@ -7,6 +7,6 @@ export const satkerRoute = Router()
 
 satkerRoute.get(`/:status`, authMiddleware, getAll)
 satkerRoute.get(`/data/:id`, authMiddleware, getDataById)
-satkerRoute.post(`/`, createData)
-satkerRoute.put(`/:id`, updateData)
+satkerRoute.post(`/`, authMiddleware, createData)
+satkerRoute.put(`/:id`, authMiddleware, updateData)
 satkerRoute.delete(`/:id`, authMiddleware, deleteData)
