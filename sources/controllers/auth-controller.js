@@ -146,7 +146,7 @@ export const login = async (req, res, next) => {
         res.cookie(`refresh_token`, token, {
             overwrite: true,
             secure: false, // secure https
-            httpOnly: true, // setting agar cookie tidak bersifat public
+            httpOnly: false, // setting agar cookie tidak bersifat public
             maxAge: 6 * 60 * 60 * 1000 // masa aktif cookie (1 hari dalam satuan milisecond/86400)
         })
 
