@@ -147,6 +147,7 @@ export const login = async (req, res, next) => {
             overwrite: true,
             secure: false, // secure https
             httpOnly: false, // setting agar cookie tidak bersifat public
+            domain: `ipdn.ac.id`,
             maxAge: 6 * 60 * 60 * 1000 // masa aktif cookie (1 hari dalam satuan milisecond/86400)
         })
 
