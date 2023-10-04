@@ -150,7 +150,7 @@ export const login = async (req, res, next) => {
             secure: false, // secure https
             httpOnly: false, // setting agar cookie tidak bersifat public
             maxAge: 6 * 60 * 60 * 1000, // masa aktif cookie (1 hari dalam satuan milisecond/86400)
-            domain: frontend, // nangtoskeun nami domain kanggo cookie
+            domain: appHost, // nangtoskeun nami domain kanggo cookie
         })
 
         // Mengembalikan pesan sukses
