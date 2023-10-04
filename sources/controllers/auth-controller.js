@@ -154,7 +154,7 @@ export const login = async (req, res, next) => {
         consoleInfo(`User dengan email ${email}, berhasil melakukan login`, { token: refreshToken })
         return res.status(200).json({
             message: `Proses login sukses dijalankan`,
-            data: { token: refreshToken }
+            data: { token: token }
         })
 
     } catch (error) {
