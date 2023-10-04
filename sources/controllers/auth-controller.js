@@ -102,7 +102,7 @@ export const deleteUser = async (req, res, next) => {
     const { id } = req.body
 
     // Mengembalikan pesan error ketika id tidak terbaca
-    if(null == id) {
+    if (null == id) {
         consoleError(`Id user tidak terbaca`)
         return res.sendStatus(422)
     }
@@ -134,6 +134,7 @@ export const login = async (req, res, next) => {
     // Inisialisasi variable
     const data = req.body
     const { email } = req.body
+    const appHost = process.env.APP_HOST
 
     try {
         // Menjalankan service login user
@@ -147,14 +148,15 @@ export const login = async (req, res, next) => {
             overwrite: true,
             secure: false, // secure https
             httpOnly: false, // setting agar cookie tidak bersifat public
-            maxAge: 6 * 60 * 60 * 1000 // masa aktif cookie (1 hari dalam satuan milisecond/86400)
+            maxAge: 6 * 60 * 60 * 1000, // masa aktif cookie (1 hari dalam satuan milisecond/86400)
+            domain: appHost, // nangtoskeun nami domain kanggo cookie
         })
 
         // Mengembalikan pesan sukses
         consoleInfo(`User dengan email ${email}, berhasil melakukan login`, { token: refreshToken })
         return res.status(200).json({
             message: `Proses login sukses dijalankan`,
-            data: { token: token }
+            data: { token }
         })
 
     } catch (error) {
@@ -197,6 +199,15 @@ export const logout = async (req, res, next) => {
 }
 
 
+
+
+/**
+ * Controller kanggo ngadamel token enggal
+ * @param {Headers} req 
+ * @param {token} res 
+ * @param {error} next 
+ * @returns 
+ */
 
 export const refreshToken = async (req, res, next) => {
     // Inisialisasi variable

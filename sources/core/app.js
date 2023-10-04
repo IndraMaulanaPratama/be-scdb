@@ -16,14 +16,13 @@ import {
 
 // Inisialisasi Variable
 const app = express()
-const globalFrontendApp = process.env.HOST_FRONTEND
-const domainFrontend = "http://v2.scdb.ipdn.ac.id"
-const client = [globalFrontendApp, domainFrontend]
+const domainFrontend = process.env.HOST_FRONTEND
+const client = [domainFrontend]
 let data = []
 
 app.use(express.json()) // Module untuk memperbolehkan request masuk berupa json
 app.use(cookieParser()) // Module untuk dapat membaca data cookie
-app.use(cors({ credentials: true, origin: client, exposedHeaders: ['set-cookie', 'refresh_token'] })) // Module untuk dapat diakses oleh system lain
+app.use(cors({ credentials: true, origin: client })) // Module untuk dapat diakses oleh system lain
 
 
 // Route
