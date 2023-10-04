@@ -146,10 +146,11 @@ export const login = async (req, res, next) => {
         // Membuat cookie untuk menyimpan token client
         res.cookie(`refresh_token`, token, {
             overwrite: true,
-            secure: false, // secure https
+            secure: true, // secure https
             httpOnly: false, // setting agar cookie tidak bersifat public
             maxAge: 6 * 60 * 60 * 1000, // masa aktif cookie (1 hari dalam satuan milisecond/86400)
             domain: appHost, // nangtoskeun nami domain kanggo cookie
+            sameSite: "none"
         })
 
         // Mengembalikan pesan sukses

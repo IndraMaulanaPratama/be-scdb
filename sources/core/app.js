@@ -22,7 +22,7 @@ let data = []
 
 app.use(express.json()) // Module untuk memperbolehkan request masuk berupa json
 app.use(cookieParser()) // Module untuk dapat membaca data cookie
-app.use(cors({ credentials: true, origin: client })) // Module untuk dapat diakses oleh system lain
+app.use(cors({ credentials: true, origin: client, exposedHeaders: ['set-cookie', 'refresh_token'] })) // Module untuk dapat diakses oleh system lain
 
 
 // Route
